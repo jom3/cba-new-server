@@ -1,0 +1,81 @@
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ProyectosService } from 'src/proyectos/proyectos.service';
+import { DataSource, Repository } from 'typeorm';
+import { CreateBeneficiarioDto } from './dto/create-beneficiario.dto';
+import { UpdateBeneficiarioDto } from './dto/update-beneficiario.dto';
+import { Beneficiario } from './entities/beneficiario.entity';
+
+@Injectable()
+export class BeneficiariosService {
+
+  constructor(
+    @InjectRepository(Beneficiario)
+    private readonly beneficiarioRepository:Repository<Beneficiario>,
+    private readonly dataSource:DataSource,
+    private readonly proyectoService:ProyectosService
+  ){}
+
+  async create(createBeneficiarioDto: CreateBeneficiarioDto) {
+    try {
+      const beneficiario = this.beneficiarioRepository.create(createBeneficiarioDto);
+      await this.beneficiarioRepository.save(beneficiario);
+      return 'LA postulacion fue realizada con exito';
+    } catch (error) {
+      this.showError(error)
+    }
+  }
+
+  async findAll() {
+    const beneficiarios = await this.beneficiarioRepository.find();
+    return beneficiarios;
+  }
+
+  async findOne(id: string) {
+    const beneficiario = await this.beneficiarioRepository.findOneBy({beneficiario_id:id});
+    if(!beneficiario){
+      throw new NotFoundException('No existe la postulacion')
+    }
+    return beneficiario;
+  }
+
+  async accept(id: string) {
+    const {proyecto_id} = await this.findOne(id)
+    const {estado} = await this.proyectoService.findOne(proyecto_id)
+    if(estado!=1){
+      throw new BadRequestException('El proyecto esta inactivo, no se pueden aceptar mas postulantes')
+    }
+    await this.dataSource.createQueryBuilder()
+    .update(Beneficiario)
+    .set({
+      estado:1,
+      aceptado_en:new Date(),
+      rechazado_en:null
+    })
+    .where('beneficiario_id=:id',{id})
+    .execute()
+    return `El postulante fue aceptado como beneficiario en el proyecto`;
+  }
+
+  async deny(id: string) {
+    const {proyecto_id} = await this.findOne(id)
+    const {estado} = await this.proyectoService.findOne(proyecto_id)
+    if(estado!=1){
+      throw new BadRequestException('El proyecto esta inactivo, no se pueden rechazar mas postulantes')
+    }
+    await this.dataSource.createQueryBuilder()
+    .update(Beneficiario)
+    .set({
+      estado:0,
+      aceptado_en:null,
+      rechazado_en:new Date()
+    })
+    .where('beneficiario_id=:id',{id})
+    .execute()
+    return `El postulante fue rechazado como beneficiario en el proyecto`;
+  }
+
+  private showError(error:any){
+    throw new InternalServerErrorException(error)
+  }
+}

@@ -8,7 +8,10 @@ export class Auth {
     persona_id:string;
     
     @OneToOne(
-        ()=>Persona
+        ()=>Persona,
+        (persona)=>persona.auth,{
+            eager:true
+        }
     )
     @JoinColumn({name:'persona_id'})
     persona:Persona

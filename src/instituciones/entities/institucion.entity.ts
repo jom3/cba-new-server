@@ -5,6 +5,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -48,6 +49,6 @@ export class Institucion {
   @OneToOne(()=>Proyecto,(proyecto)=>proyecto.institucion)
   proyecto:Proyecto;
 
-  @OneToOne(()=>Ingreso,(ingreso)=>ingreso.institucion)
+  @OneToMany(()=>Ingreso,(ingreso)=>ingreso.institucion)
   ingreso:Ingreso;
 }

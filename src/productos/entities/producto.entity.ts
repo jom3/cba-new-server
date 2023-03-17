@@ -41,7 +41,6 @@ export class Producto {
   @OneToMany(() => Inventario, (inventario) => inventario.producto, {
     cascade: true,
     eager: true,
-    nullable: false,
   })
   inventario: Inventario;
 

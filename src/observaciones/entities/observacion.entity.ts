@@ -1,21 +1,16 @@
+import { Miembro } from "src/miembros/entities/miembro.entity";
 import { Persona } from "src/personas/entities/persona.entity";
 import { Proyecto } from "src/proyectos/entities/proyecto.entity";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Observacione {
+export class Observacion {
 
     @PrimaryGeneratedColumn('uuid')
     observacion_id:string;
 
     @Column('text')
     razon:string;
-
-    @Column('text')
-    proyecto_id:string;
-
-    @Column('text')
-    persona_id:string;
 
     @Column('numeric',{
         default:1
@@ -61,7 +56,9 @@ export class Observacione {
     @JoinColumn({name:'proyecto_id'})
     proyecto:Proyecto;
 
-    @ManyToOne(()=>Persona,(persona)=>persona.observacion)
-    @JoinColumn({name:'persona_id'})
-    persona:Persona;
+    @ManyToOne(()=>Miembro,(miembro)=>miembro.observacion,{
+        eager:true
+    })
+    @JoinColumn({name:'miembro_id'})
+    miembro:Miembro;
 }

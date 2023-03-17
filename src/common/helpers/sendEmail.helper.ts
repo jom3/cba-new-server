@@ -4,7 +4,6 @@ import { Persona } from 'src/personas/entities/persona.entity';
 
 export const SendEmail = async (password: string, persona: Persona) => {
   try {
-    console.log(persona)
     const { nombre_completo, contacto} = persona;
     const { email } = contacto;
 

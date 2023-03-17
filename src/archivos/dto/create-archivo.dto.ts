@@ -14,5 +14,6 @@ export class CreateArchivoDto {
 	desc?:string;
 
     @IsString()
-	archivo:string;
+    @IsOptional()
+	archivo?:string;
 }

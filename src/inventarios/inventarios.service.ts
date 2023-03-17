@@ -43,10 +43,13 @@ export class InventariosService {
     if(!inventario){
       throw new NotFoundException('No existe el inventario consultado');
     }
+    console.log(inventario)
     return inventario;
   }
 
   async update(id: string, updateInventarioDto: UpdateInventarioDto) {
+    console.log(updateInventarioDto)
+    console.log('first')
     const inventarioData = await this.findOne(id);
     const ProductoEstado = await this.productoService.findOne(inventarioData.producto_id)
     try {

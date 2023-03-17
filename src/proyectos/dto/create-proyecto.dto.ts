@@ -1,6 +1,7 @@
 
 import { Type } from "class-transformer";
 import { IsArray, IsDate, IsDateString, IsIn, IsNumber, IsOptional, IsString, IsUUID, Min } from "class-validator";
+import { IsNull } from "typeorm";
 
 export class CreateProyectoDto {
 

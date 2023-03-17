@@ -43,7 +43,10 @@ export class Beneficiario {
     @JoinColumn({name:'proyecto_id'})
     proyecto:Proyecto;
 
-    @ManyToOne(()=>Persona,(persona)=>persona.beneficiario)
+    @ManyToOne(()=>Persona,(persona)=>persona.beneficiario,{
+        eager:true,
+        cascade:true
+    })
     @JoinColumn({name:'persona_id'})
     persona:Persona;
 }

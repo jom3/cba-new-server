@@ -5,10 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tarea } from './entities/tarea.entity';
 import { Egreso } from 'src/egresos/entities/egreso.entity';
 import { Avance } from 'src/avances/entities/avance.entity';
+import { Miembro } from 'src/miembros/entities/miembro.entity';
+import { Proyecto } from 'src/proyectos/entities/proyecto.entity';
 
 @Module({
   imports:[
-    TypeOrmModule.forFeature([Tarea,Egreso,Avance])
+    TypeOrmModule.forFeature([Tarea,Proyecto,Miembro,Egreso,Avance])
   ],
   controllers: [TareasController],
   providers: [TareasService]

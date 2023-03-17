@@ -1,17 +1,14 @@
+import { Observacion } from "src/observaciones/entities/observacion.entity";
+import { Persona } from "src/personas/entities/persona.entity";
 import { Proyecto } from "src/proyectos/entities/proyecto.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Tarea } from "src/tareas/entities/tarea.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Miembro {
 
     @PrimaryGeneratedColumn('uuid')
     miembro_id:string;
-
-    @Column('text')
-    persona_id:string;
-
-    @Column('text')
-    proyecto_id:string;
 
     @Column('text')
     rol:string;
@@ -47,4 +44,17 @@ export class Miembro {
     @ManyToOne(()=>Proyecto,(proyecto)=>proyecto.miembro)
     @JoinColumn({name:'proyecto_id'})
     proyecto:Proyecto;
+
+    @ManyToOne(()=>Persona,(persona)=>persona.miembro,{
+        eager:true
+    })
+    @JoinColumn({name:'persona_id'})
+    persona:Persona;
+
+    @OneToMany(()=>Tarea,(tarea)=>tarea.miembro)
+    tarea:Tarea;
+
+    @OneToMany(()=>Observacion,(observacion)=>observacion.miembro)
+    observacion:Observacion;
+
 }

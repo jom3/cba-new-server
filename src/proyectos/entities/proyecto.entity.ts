@@ -4,10 +4,11 @@ import { Egreso } from 'src/egresos/entities/egreso.entity';
 import { Ingreso } from 'src/ingresos/entities/ingreso.entity';
 import { Institucion } from 'src/instituciones/entities/institucion.entity';
 import { Miembro } from 'src/miembros/entities/miembro.entity';
-import { Observacione } from 'src/observaciones/entities/observacione.entity';
+import { Observacion} from 'src/observaciones/entities/observacion.entity';
 import { Persona } from 'src/personas/entities/persona.entity';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { Servicio } from 'src/servicios/entities/servicio.entity';
+import { Tarea } from 'src/tareas/entities/tarea.entity';
 import { TiposProyecto } from 'src/tipos-proyectos/entities/tipos-proyecto.entity';
 import {
   BeforeInsert,
@@ -70,33 +71,7 @@ export class Proyecto {
 
   @Column('date')
   f_fin: Date;
-
-  @Column('text', {
-    nullable: false,
-  })
-  persona_id: string;
-
-  @Column('text', {
-    nullable: true,
-  })
-  institucion_id: string;
-
-  @Column('text', {
-    nullable: true,
-  })
-  producto_id: string;
-
-  @Column('text', {
-    nullable: true,
-  })
-  servicio_id: string;
-
-  @Column('text', {
-    nullable: false,
-    unique:false
-  })
-  tipo_id: string;
-
+  
   @Column('timestamp', {
     nullable: true,
   })
@@ -120,10 +95,6 @@ export class Proyecto {
   @BeforeInsert()
   checkInsert() {
     this.creado_en = new Date();
-    // this.f_inicio = new Date(`${this.f_inicio}`)
-    // this.f_ejecucion = new Date(`${this.f_ejecucion}`)
-    // this.f_fin = new Date(`${this.f_fin}`)
-    // console.log(this.f_inicio)
   }
 
   @BeforeUpdate()
@@ -134,43 +105,41 @@ export class Proyecto {
   @ManyToOne(() => Persona, (persona) => persona.proyecto, {
     eager: true,
     cascade: true,
-    nullable: false,
   })
-  @JoinColumn({ name: 'persona_id' })
+  @JoinColumn({name:'persona_id'})
   persona: Persona;
+
+  @ManyToOne(() => TiposProyecto, (tipo_proyecto) => tipo_proyecto.proyecto, {
+    eager: true,
+    cascade: true,
+  })
+  @JoinColumn({name:'tipo_id'})
+  tipo_proyecto: TiposProyecto;
 
   @OneToOne(() => Institucion, (institucion) => institucion.proyecto, {
     eager: true,
     cascade: true,
     nullable: true,
   })
-  @JoinColumn({ name: 'institucion_id' })
+  @JoinColumn({name:'institucion_id'})
   institucion: Institucion;
-
+  
   @OneToOne(() => Producto, (producto) => producto.proyecto, {
     eager: true,
     cascade: true,
     nullable: true,
   })
-  @JoinColumn({ name: 'producto_id' })
+  @JoinColumn({name:'producto_id'})
   producto: Producto;
-
+  
   @OneToOne(() => Servicio, (servicio) => servicio.proyecto, {
     eager: true,
     cascade: true,
     nullable: true,
   })
-  @JoinColumn({ name: 'servicio_id' })
+  @JoinColumn({name:'servicio_id'})
   servicio: Servicio;
-
-  @ManyToOne(() => TiposProyecto, (tipo_proyecto) => tipo_proyecto.proyecto, {
-    eager: true,
-    cascade: true,
-    nullable: true,
-  })
-  @JoinColumn({ name: 'tipo_id' })
-  tipo_proyecto: TiposProyecto;
-
+  
   @OneToMany(() => Ingreso, (ingreso) => ingreso.proyecto, {
     eager: true,
     cascade: true,
@@ -188,16 +157,15 @@ export class Proyecto {
   @OneToMany(() => Miembro, (miembro) => miembro.proyecto, {
     eager: true,
     cascade: true,
-    nullable: true,
   })
   miembro: Miembro;
 
-  @OneToMany(() => Observacione, (observacion) => observacion.proyecto, {
+  @OneToMany(() => Observacion, (observacion) => observacion.proyecto, {
     eager: true,
     cascade: true,
     nullable: true,
   })
-  observacion: Observacione;
+  observacion: Observacion;
 
   @OneToMany(() => Beneficiario, (beneficiario) => beneficiario.proyecto, {
     eager: true,
@@ -212,4 +180,10 @@ export class Proyecto {
     nullable: true,
   })
   archivo: Archivo;
+
+  @OneToMany(() => Tarea, (tarea) => tarea.proyecto, {
+    eager: true,
+    nullable: true,
+  })
+  tarea: Tarea;
 }

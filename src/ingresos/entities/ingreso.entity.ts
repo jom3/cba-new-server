@@ -7,12 +7,6 @@ export class Ingreso {
   @PrimaryGeneratedColumn('uuid')
   ingreso_id: string;
 
-  @Column('text')
-  institucion_id: string;
-
-  @Column('text')
-  proyecto_id: string;
-
   @Column('float', {
     default: 0,
   })
@@ -49,13 +43,13 @@ export class Ingreso {
   })
   bloqueado_en: Date;
 
-  @OneToOne(()=>Institucion,(institucion)=>institucion.ingreso,{
+  @ManyToOne(()=>Institucion,(institucion)=>institucion.ingreso,{
     eager:true,
     cascade:true
   })
   @JoinColumn({name:'institucion_id'})
   institucion:Institucion;
-
+  
   @ManyToOne(()=>Proyecto,(proyecto)=>proyecto.ingreso)
   @JoinColumn({name:'proyecto_id'})
   proyecto:Proyecto;

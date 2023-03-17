@@ -17,7 +17,7 @@ export class AvancesService {
     try {
       const avance = this.avanceRepository.create(createAvanceDto);
       await this.avanceRepository.save(avance);
-      return 'El avance fue registrado con exito';
+      return {msg:'El avance fue registrado con exito'};
     } catch (error) {
       this.showError(error);
     }
@@ -37,7 +37,7 @@ export class AvancesService {
       throw new BadRequestException('El avance no puede ser eliminado, esta bloqueado')
     }
     await this.avanceRepository.delete({avance_id:id});
-    return `El avance fue eliminado con exito`;
+    return {msg:`El avance fue eliminado con exito`};
   }
 
   async lock(id: string) {
@@ -53,7 +53,7 @@ export class AvancesService {
     })
     .where('avance_id=:id',{id})
     .execute()
-    return `El avance fue bloqueado con exito`;
+    return {msg:`El avance fue bloqueado con exito`};
   }
 
   private showError(error:any){

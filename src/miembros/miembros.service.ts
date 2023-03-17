@@ -16,9 +16,14 @@ export class MiembrosService {
 
   async create(createMiembroDto: CreateMiembroDto) {
     try {
-      const miembro = this.miembroRepository.create(createMiembroDto);
+      const {persona_id,proyecto_id,...toCreate} = createMiembroDto;
+      const miembro = this.miembroRepository.create({
+        persona:{persona_id},
+        proyecto:{proyecto_id},
+        ...toCreate
+      });
       await this.miembroRepository.save(miembro);
-      return 'El nuevo miembro fue agregado con exito al proyecto';
+      return {msg:'El nuevo miembro fue agregado con exito al proyecto'};
     } catch (error) {
       this.showError(error)
     }
@@ -48,7 +53,7 @@ export class MiembrosService {
         throw new BadRequestException('No existe el miembro que se busca modificar')
       }
       await this.miembroRepository.save(miembro);
-      return `El miembro fue modificado con exito`;
+      return {msg:`El miembro fue modificado con exito`};
     } catch (error) {
       this.showError(error)
     }
@@ -67,7 +72,7 @@ export class MiembrosService {
       })
       .where('miembro_id=:id',{id})
       .execute()
-    return `El miembro fue eliminado con exito`;
+    return {msg:`El miembro fue eliminado con exito`};
   }
 
   async restore(id: string) {
@@ -83,7 +88,7 @@ export class MiembrosService {
       })
       .where('miembro_id=:id',{id})
       .execute()
-    return `El miembro fue restaurado con exito`;
+    return {msg:`El miembro fue restaurado con exito`};
   }
 
   private showError(error:any){

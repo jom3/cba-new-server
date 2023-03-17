@@ -9,8 +9,9 @@ import {
 import { Contacto } from 'src/contactos/entities/contacto.entity';
 import { Proyecto } from 'src/proyectos/entities/proyecto.entity';
 import { Egreso } from 'src/egresos/entities/egreso.entity';
-import { Observacione } from 'src/observaciones/entities/observacione.entity';
 import { Beneficiario } from 'src/beneficiarios/entities/beneficiario.entity';
+import { Miembro } from 'src/miembros/entities/miembro.entity';
+import { Auth } from 'src/auth/entities/auth.entity';
 
 @Entity()
 export class Persona {
@@ -44,6 +45,9 @@ export class Persona {
   @JoinColumn({ name: 'contacto_id' })
   contacto: Contacto;
 
+  @OneToOne(() => Auth, auth=>auth.persona)
+  auth: Auth;
+
   @Column('numeric', {
     default: 1,
   })
@@ -55,9 +59,9 @@ export class Persona {
   @OneToMany(()=>Egreso, (egreso)=>egreso.persona)
   egreso:Egreso
 
-  @OneToMany(()=>Observacione,(observacion)=>observacion.persona)
-  observacion:Observacione
-
   @OneToMany(()=>Beneficiario,(beneficiario)=>beneficiario.persona)
   beneficiario:Beneficiario
+
+  @OneToMany(()=>Miembro,(miembro)=>miembro.persona)
+  miembro:Miembro
 }

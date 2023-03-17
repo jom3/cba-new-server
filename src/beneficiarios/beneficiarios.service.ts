@@ -20,7 +20,7 @@ export class BeneficiariosService {
     try {
       const beneficiario = this.beneficiarioRepository.create(createBeneficiarioDto);
       await this.beneficiarioRepository.save(beneficiario);
-      return 'LA postulacion fue realizada con exito';
+      return {msg:'La postulacion fue realizada con exito'};
     } catch (error) {
       this.showError(error)
     }
@@ -28,6 +28,11 @@ export class BeneficiariosService {
 
   async findAll() {
     const beneficiarios = await this.beneficiarioRepository.find();
+    return beneficiarios;
+  }
+
+  async findAllMe(id:string) {
+    const beneficiarios = await this.beneficiarioRepository.find({where:{persona:{persona_id:id}}});
     return beneficiarios;
   }
 
@@ -54,7 +59,7 @@ export class BeneficiariosService {
     })
     .where('beneficiario_id=:id',{id})
     .execute()
-    return `El postulante fue aceptado como beneficiario en el proyecto`;
+    return {msg:`El postulante fue aceptado como beneficiario en el proyecto`};
   }
 
   async deny(id: string) {
@@ -72,7 +77,7 @@ export class BeneficiariosService {
     })
     .where('beneficiario_id=:id',{id})
     .execute()
-    return `El postulante fue rechazado como beneficiario en el proyecto`;
+    return {msg:`El postulante fue rechazado como beneficiario en el proyecto`};
   }
 
   private showError(error:any){

@@ -8,12 +8,6 @@ export class Egreso {
   @PrimaryGeneratedColumn('uuid')
   egreso_id: string;
 
-  @Column('text')
-  persona_id: string;
-
-  @Column('text')
-  proyecto_id: string;
-
   @Column('float', {
     default: 0,
   })
@@ -56,11 +50,8 @@ export class Egreso {
   })
   @JoinColumn({name:'persona_id'})
   persona:Persona;
-
+  
   @ManyToOne(()=>Proyecto,(proyecto)=>proyecto.egreso)
   @JoinColumn({name:'proyecto_id'})
   proyecto:Proyecto;
-
-  @OneToOne(()=>Tarea,(tarea)=>tarea.egreso)
-  tarea:Tarea;
 }

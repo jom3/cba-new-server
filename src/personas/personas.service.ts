@@ -46,9 +46,7 @@ export class PersonasService {
         foto: `${file ? file.filename : null}`,
         ...personDetails,
       });
-      console.log(persona)
       await this.personaRepository.save(persona);
-      console.log(persona)
       const genPass = generatePassword();
       const encriptedPassword = encryptPassword(genPass);
 
@@ -142,7 +140,7 @@ export class PersonasService {
       })
       .where('persona_id=:id', { id })
       .execute();
-    return `Persona eliminada`;
+    return {msg:`Persona eliminada`};
   }
 
   async restore(id: string) {
@@ -154,7 +152,7 @@ export class PersonasService {
       })
       .where('persona_id=:id', { id })
       .execute();
-    return `persona restaurada`;
+    return {msg:`persona restaurada`};
   }
 
   private showError(error: any) {

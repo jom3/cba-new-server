@@ -16,9 +16,14 @@ export class IngresosService {
 
   async create(createIngresoDto: CreateIngresoDto) {
     try {
-      const ingreso = this.ingresoRepository.create(createIngresoDto);
+      const {institucion_id,proyecto_id,...toCreate} = createIngresoDto;
+      const ingreso = this.ingresoRepository.create({
+        institucion:{institucion_id},
+        proyecto:{proyecto_id},
+        ...toCreate
+      });
       await this.ingresoRepository.save(ingreso);
-      return 'El ingreso fue registrado con exito';
+      return {msg:'El ingreso fue registrado con exito'};
     } catch (error) {
       this.showError(error)
     }
@@ -48,7 +53,7 @@ export class IngresosService {
         throw new BadRequestException('No existe un ingreso con ese codigo');
       }
       await this.ingresoRepository.save(ingreso);
-      return `El ingreso fue modificado con exito`;
+      return {msg:`El ingreso fue modificado con exito`};
     } catch (error) {
       this.showError(error)
     }
@@ -60,7 +65,7 @@ export class IngresosService {
         throw new BadRequestException('El ingreso no puede ser eliminado, esta bloqueado');
       }
       await this.ingresoRepository.delete({ingreso_id:id});
-    return `El ingreso fue eliminado con exito`;
+    return {msg:`El ingreso fue eliminado con exito`};
   }
 
   async lock(id: string) {
@@ -76,7 +81,7 @@ export class IngresosService {
       })
       .where('ingreso_id=:id',{id})
       .execute()
-    return `El ingreso fue bloqueado con exito`;
+    return {msg:`El ingreso fue bloqueado con exito`};
   }
 
   private showError(error:any){

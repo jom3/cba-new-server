@@ -1,34 +1,55 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { ObservacionesService } from './observaciones.service';
-import { CreateObservacioneDto } from './dto/create-observacione.dto';
-import { UpdateObservacioneDto } from './dto/update-observacione.dto';
+import { CreateObservacionDto } from './dto/create-observacion.dto';
+import { UpdateObservacionDto } from './dto/update-observacion.dto';
+import { RoleProtected } from 'src/common/decorators/rol-protected/rol-protected.decorator';
+import { ValidRoles } from 'src/common/interfaces/valid-roles/valid-roles';
+import { AuthGuard } from '@nestjs/passport';
+import { PersonaRoleGuard } from 'src/common/guards/persona-role/persona-role.guard';
 
 @Controller('observaciones')
 export class ObservacionesController {
   constructor(private readonly observacionesService: ObservacionesService) {}
 
-  @Post()
-  create(@Body() createObservacioneDto: CreateObservacioneDto) {
-    return this.observacionesService.create(createObservacioneDto);
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
+  @Post('registrarObservacion')
+  create(@Body() createObservacionDto: CreateObservacionDto) {
+    return this.observacionesService.create(createObservacionDto);
   }
 
-  @Get()
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
+  @Get('listarObservaciones')
   findAll() {
     return this.observacionesService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.observacionesService.findOne(+id);
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
+  @Get('listarObservacion/:id')
+  findOne(@Param('id',ParseUUIDPipe) id: string) {
+    return this.observacionesService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateObservacioneDto: UpdateObservacioneDto) {
-    return this.observacionesService.update(+id, updateObservacioneDto);
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
+  @Patch('modificarObservacion/:id')
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateObservacionDto: UpdateObservacionDto) {
+    return this.observacionesService.update(id, updateObservacionDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.observacionesService.remove(+id);
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
+  @Delete('eliminarObservacion/:id')
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.observacionesService.remove(id);
+  }
+
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
+  @Delete('bloquearObservacion/:id')
+  block(@Param('id', ParseUUIDPipe) id: string) {
+    return this.observacionesService.block(id);
   }
 }

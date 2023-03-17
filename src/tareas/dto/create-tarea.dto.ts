@@ -18,7 +18,6 @@ export class CreateTareaDto {
     desc?:string;
 
     @IsString()
-    @IsUUID()
     @IsOptional()
     egreso_id?:string;
 }

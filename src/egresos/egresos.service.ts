@@ -20,9 +20,14 @@ export class EgresosService {
 
   async create(createEgresoDto: CreateEgresoDto) {
     try {
-      const egreso = this.egresoRepository.create(createEgresoDto);
+      const {persona_id,proyecto_id,...toCreate} = createEgresoDto
+      const egreso = this.egresoRepository.create({
+        persona:{persona_id},
+        proyecto:{proyecto_id},
+        ...toCreate
+      });
       await this.egresoRepository.save(egreso);
-      return 'El nuevo egreso fue registrado con exito';
+      return {msg:'El nuevo egreso fue registrado con exito'};
     } catch (error) {
       this.showError(error);
     }
@@ -57,7 +62,7 @@ export class EgresosService {
         throw new NotFoundException('No existe un egreso con ese codigo');
       }
       await this.egresoRepository.save(egreso);
-      return `El egreso fue modificado con exito`;
+      return {msg:`El egreso fue modificado con exito`};
     } catch (error) {
       this.showError(error);
     }
@@ -71,7 +76,7 @@ export class EgresosService {
       );
     }
     await this.egresoRepository.delete({ egreso_id: id });
-    return `El egreso fue eliminado con exito`;
+    return {msg:`El egreso fue eliminado con exito`};
   }
 
   async lock(id: string) {
@@ -88,7 +93,7 @@ export class EgresosService {
       bloqueado_en:new Date()
     }).where('egreso_id=:id',{id})
     .execute()
-    return `El egreso fue bloqueado con exito`;
+    return {msg:`El egreso fue bloqueado con exito`};
   }
 
   private showError(error: any) {

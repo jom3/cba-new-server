@@ -1,6 +1,8 @@
 import { Avance } from "src/avances/entities/avance.entity";
 import { Egreso } from "src/egresos/entities/egreso.entity";
-import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Miembro } from "src/miembros/entities/miembro.entity";
+import { Proyecto } from "src/proyectos/entities/proyecto.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Tarea {
@@ -9,23 +11,12 @@ export class Tarea {
     tarea_id:string;
 
     @Column('text')
-    proyecto_id:string;
-
-    @Column('text')
-    miembro_id:string;
-
-    @Column('text')
     tarea:string;
 
     @Column('text',{
         nullable:true
     })
     desc:string;
-
-    @Column('text',{
-        nullable:true
-    })
-    egreso_id:string;
 
     @Column('numeric',{
         default:1
@@ -52,20 +43,6 @@ export class Tarea {
     })
     completado_en:Date;
 
-    @OneToMany(()=>Avance,(avance)=>avance.tarea,{
-        eager:true,
-        nullable:true,
-        cascade:true
-    })
-    avance:Avance;
-
-    @OneToOne(()=>Egreso,(egreso)=>egreso.tarea,{
-        eager:true,
-        cascade:true,
-        nullable:true
-    })
-    egreso:Egreso;
-
     @BeforeInsert()
     checkInsert(){
         this.creado_en = new Date();
@@ -75,6 +52,20 @@ export class Tarea {
     checkUpdate(){
         this.modificado_en = new Date();
     }
+    @ManyToOne(()=>Proyecto,(proyecto)=>proyecto.tarea)
+    @JoinColumn({name:'proyecto_id'})
+    proyecto:Proyecto;
+    
+    @ManyToOne(()=>Miembro,(miembro)=>miembro.tarea,{
+        eager:true
+    })
+    @JoinColumn({name:'miembro_id'})
+    miembro:Miembro;
 
-
+    @OneToMany(()=>Avance,(avance)=>avance.tarea,{
+        eager:true,
+        nullable:true,
+        cascade:true
+    })
+    avance:Avance;
 }

@@ -24,7 +24,7 @@ export class ArchivosService {
         ...createArchivoDto
       });
       await this.archivoRepository.save(archivo);
-      return 'El archivo fue registrado con exito';
+      return {msg:'El archivo fue registrado con exito'};
     } catch (error) {
       this.showError(error)
     }
@@ -47,12 +47,12 @@ export class ArchivosService {
     try {
       const {proyecto_id} = await this.findOne(id);
       const {estado} = await this.proyectoService.findOne(proyecto_id)
-      if(estado!=1){
+      if(estado==1){
         throw new BadRequestException('El archivo no puede ser modificado, no esta activo')
       }
-      const archivo = await this.archivoRepository.preload({archivo_id:id, archivo:file.filename,...updateArchivoDto})
+      const archivo = await this.archivoRepository.preload({archivo_id:id, archivo:file?.filename,...updateArchivoDto})
       await this.archivoRepository.save(archivo)
-      return `El archivo fue modificado con exito`;
+      return {msg:`El archivo fue modificado con exito`};
     } catch (error) {
       this.showError(error)
     }
@@ -60,19 +60,23 @@ export class ArchivosService {
 
   async remove(id: string) {
     const {proyecto_id, archivo} = await this.findOne(id);
-      const {estado} = await this.proyectoService.findOne(proyecto_id)
-      if(estado!=1){
-        throw new BadRequestException('El archivo no puede ser modificado, no esta activo')
-      }
+    const {estado} = await this.proyectoService.findOne(proyecto_id)
+    if(estado==1){
+      throw new BadRequestException('El archivo no puede ser modificado, no esta activo')
+    }
     if(!archivo){
       throw new NotFoundException('No existe el archivo')
     }
-    fs.unlinkSync(`./static/archivos/${archivo}`)
+    console.log(archivo)
+    // fs.unlink(`./static/archivos/${archivo}`,function(e){
+    //   if(e) console.log(e)
+    // })
     await this.archivoRepository.delete({archivo_id:id})
-    return `El archivo fue eliminado con exito`;
+    return {msg:`El archivo fue eliminado con exito`};
   }
 
   private showError(error:any){
+    console.log(error)
     throw new InternalServerErrorException(error)
   }
 }

@@ -41,6 +41,11 @@ export class InstitucionesService {
     return instituciones;
   }
 
+  async findAllFinanciadores() {
+    const instituciones = await this.institucionRepository.findBy({tipo:'Financiador'});
+    return instituciones;
+  }
+
   async findOne(id: string) {
     const institucion = await this.institucionRepository.findOneBy({institucion_id:id});
     if(!institucion){

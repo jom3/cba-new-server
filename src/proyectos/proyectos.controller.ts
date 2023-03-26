@@ -19,11 +19,18 @@ export class ProyectosController {
     return this.proyectosService.create(createProyectoDto);
   }
 
-  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal,ValidRoles.Usuario)
   @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
   @Get('listarProyectos')
   findAll() {
     return this.proyectosService.findAll();
+  }
+
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal,ValidRoles.Usuario)
+  @UseGuards(AuthGuard('jwt'),PersonaRoleGuard)
+  @Get('listarProyectosPublicos')
+  findAllPublicos() {
+    return this.proyectosService.findAllPublicos();
   }
 
   @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)

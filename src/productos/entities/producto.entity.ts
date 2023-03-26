@@ -77,7 +77,7 @@ export class Producto {
   })
   eliminado_en: Date;
 
-  @OneToOne(()=>Proyecto,(proyecto)=>proyecto.producto)
+  @OneToMany(()=>Proyecto,(proyecto)=>proyecto.producto)
   proyecto:Proyecto;
 
   @BeforeInsert()

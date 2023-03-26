@@ -15,7 +15,7 @@ import {
   SendEmail,
 } from 'src/common/helpers';
 import { Contacto } from 'src/contactos/entities/contacto.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { CreatePersonaDto } from './dto/create-persona.dto';
 import { UpdatePersonaDto } from './dto/update-persona.dto';
 import { Persona } from './entities/persona.entity';
@@ -65,6 +65,37 @@ export class PersonasService {
     }
   }
 
+  async updatePerfil(id: string, updatePersonaDto: UpdatePersonaDto, file:Express.Multer.File) {
+    const { direccion, telefono, foto, ...toUpdate} =
+      updatePersonaDto;
+    const data = await this.personaRepository.findOneBy({persona_id:id})
+    const {contacto} = data
+    try {
+      const persona = await this.personaRepository.preload({
+        persona_id: id,
+        foto:`${file?file.filename:data.foto}`,
+        ...toUpdate,
+      });
+
+      if (!persona) {
+        throw new NotFoundException('No existe la persona');
+      }
+
+      await this.dataSource.createQueryBuilder()
+      .update(Contacto)
+      .set({direccion,telefono})
+      .where('contacto_id=:id',{id:contacto.contacto_id})
+      .execute();
+      await this.personaRepository.save(persona);
+
+      return {
+        msg: 'Perfil modificado con exito!',
+      };
+    } catch (error) {
+      this.showError(error);
+    }
+  }
+
   getImage(imagenName: string) {
     const path = join(`${cwd()}/static/perfiles/${imagenName}`);
     if (!existsSync(path)) {
@@ -80,7 +111,7 @@ export class PersonasService {
   }
 
   async findPersonal() {
-      const personas = await this.personaRepository.findBy({rol:'Personal'})
+      const personas = await this.personaRepository.findBy({rol:Not('Usuario')})
       return personas;
   }
 

@@ -58,6 +58,9 @@ export class Proyecto {
   })
   moneda: string;
 
+  @Column('numeric')
+  cambio: number;
+
   @Column('numeric', {
     default: 2,
   })
@@ -124,7 +127,7 @@ export class Proyecto {
   @JoinColumn({name:'institucion_id'})
   institucion: Institucion;
   
-  @OneToOne(() => Producto, (producto) => producto.proyecto, {
+  @ManyToOne(() => Producto, (producto) => producto.proyecto, {
     eager: true,
     cascade: true,
     nullable: true,
@@ -132,7 +135,7 @@ export class Proyecto {
   @JoinColumn({name:'producto_id'})
   producto: Producto;
   
-  @OneToOne(() => Servicio, (servicio) => servicio.proyecto, {
+  @ManyToOne(() => Servicio, (servicio) => servicio.proyecto, {
     eager: true,
     cascade: true,
     nullable: true,

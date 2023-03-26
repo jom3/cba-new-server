@@ -8,10 +8,16 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { RoleProtected } from 'src/common/decorators/rol-protected/rol-protected.decorator';
 import { PersonaRoleGuard } from 'src/common/guards/persona-role/persona-role.guard';
+import { ArchivoFilter, fileFilter, fileNamer } from 'src/common/helpers';
+import { ComprimidoFilter } from 'src/common/helpers/comprimidoFilter.helper';
 import { ValidRoles } from 'src/common/interfaces/valid-roles/valid-roles';
 import { BeneficiariosService } from './beneficiarios.service';
 import { CreateBeneficiarioDto } from './dto/create-beneficiario.dto';
@@ -23,9 +29,23 @@ export class BeneficiariosController {
 
   @RoleProtected(ValidRoles.Admin, ValidRoles.Personal,ValidRoles.Usuario)
   @UseGuards(AuthGuard('jwt'), PersonaRoleGuard)
+
   @Post('registrarBeneficiario')
-  create(@Body() createBeneficiarioDto: CreateBeneficiarioDto) {
-    return this.beneficiariosService.create(createBeneficiarioDto);
+  @UseInterceptors(
+    FileInterceptor('archivo', {
+      fileFilter: ArchivoFilter,
+      storage: diskStorage({
+        destination: './static/archivos/postulaciones',
+        filename: fileNamer,
+      }),
+    }),
+  )
+  create(
+    @Body() createBeneficiarioDto: CreateBeneficiarioDto,
+    @UploadedFile() file: Express.Multer.File,
+    ) {
+      console.log(file)
+    return this.beneficiariosService.create(createBeneficiarioDto,file);
   }
 
   @RoleProtected(ValidRoles.Admin, ValidRoles.Personal,ValidRoles.Usuario)

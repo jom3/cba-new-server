@@ -26,11 +26,17 @@ export class ProyectosService {
       const {
         tipo_id,
         persona_id,
+        producto_id,
+        servicio_id,
+        institucion_id,
         ...toCreate
       } = createProyectoDto;
       const proyecto = this.proyectoRepository.create({
         tipo_proyecto: { tipo_id },
         persona: { persona_id },
+        producto: producto_id?{ producto_id}:null,
+        institucion:institucion_id?{institucion_id}:null,
+        servicio:servicio_id?{servicio_id}:null,
         ...toCreate,
       });
       const respuesta = await this.proyectoRepository.save(proyecto);
@@ -44,6 +50,11 @@ export class ProyectosService {
 
   async findAll() {
     const proyectos = await this.proyectoRepository.find();
+    return proyectos;
+  }
+
+  async findAllPublicos() {
+    const proyectos = await this.proyectoRepository.findBy({caracter:'Publico'});
     return proyectos;
   }
 
@@ -73,6 +84,7 @@ export class ProyectosService {
   }
 
   async update(id: string, updateProyectoDto: UpdateProyectoDto) {
+    console.log(updateProyectoDto)
     try {
       const { estado } = await this.findOne(id);
       if (estado != 1) {

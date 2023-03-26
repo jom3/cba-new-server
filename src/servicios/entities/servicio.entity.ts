@@ -30,6 +30,6 @@ export class Servicio {
   })
   estado: number;
 
-  @OneToOne(()=>Proyecto,(proyecto)=>proyecto.servicio)
+  @OneToMany(()=>Proyecto,(proyecto)=>proyecto.servicio)
   proyecto:Proyecto;
 }

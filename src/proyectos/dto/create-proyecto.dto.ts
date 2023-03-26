@@ -25,6 +25,10 @@ export class CreateProyectoDto {
   @IsIn(['Dolares','Bolivianos'])
   moneda: string;
 
+  @IsNumber()
+  @Min(0)
+  cambio: number;
+
   @IsDate()
   @Type(() => Date)
   f_inicio: Date;

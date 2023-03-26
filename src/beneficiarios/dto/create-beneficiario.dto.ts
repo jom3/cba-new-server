@@ -1,4 +1,4 @@
-import { IsString, IsUUID } from "class-validator";
+import { IsOptional, IsString, IsUUID } from "class-validator";
 
 export class CreateBeneficiarioDto {
 
@@ -9,4 +9,13 @@ export class CreateBeneficiarioDto {
     @IsString()
     @IsUUID()
     persona_id:string;
+
+    @IsString()
+    @IsOptional()
+    archivo?:string;
+
+    @IsString()
+    @IsOptional()
+    observacion?:string;
+
 }

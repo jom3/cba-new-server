@@ -4,7 +4,7 @@ export const ArchivoFilter = ( req: Express.Request, file: Express.Multer.File, 
 
 
     const fileExptension = file.mimetype.split('/')[1];
-    const validExtensions = ['jpg','jpeg','png','gif','pdf','excel','word'];
+    const validExtensions = ['jpg','jpeg','pdf','word'];
 
     if (  validExtensions.includes( fileExptension ) ) {
         return callback( null, true )

@@ -16,9 +16,19 @@ export class BeneficiariosService {
     private readonly proyectoService:ProyectosService
   ){}
 
-  async create(createBeneficiarioDto: CreateBeneficiarioDto) {
+  async create(createBeneficiarioDto: CreateBeneficiarioDto, file:Express.Multer.File) {
+    const {persona_id, proyecto_id,archivo, ...toCreate} = createBeneficiarioDto
     try {
-      const beneficiario = this.beneficiarioRepository.create(createBeneficiarioDto);
+      const personaExist = await this.beneficiarioRepository.findBy({persona:{persona_id}})
+      if(personaExist){
+        throw new InternalServerErrorException('Ya esta postulado en este proyecto')
+      }
+      const beneficiario = this.beneficiarioRepository.create({
+        archivo:`${file?file.filename:null}`,
+        persona:{persona_id},
+        proyecto:{proyecto_id},
+        ...toCreate
+      });
       await this.beneficiarioRepository.save(beneficiario);
       return {msg:'La postulacion fue realizada con exito'};
     } catch (error) {
@@ -45,7 +55,8 @@ export class BeneficiariosService {
   }
 
   async accept(id: string) {
-    const {proyecto_id} = await this.findOne(id)
+    const {proyecto} = await this.findOne(id);
+    const {proyecto_id} = proyecto;
     const {estado} = await this.proyectoService.findOne(proyecto_id)
     if(estado!=1){
       throw new BadRequestException('El proyecto esta inactivo, no se pueden aceptar mas postulantes')
@@ -63,7 +74,8 @@ export class BeneficiariosService {
   }
 
   async deny(id: string) {
-    const {proyecto_id} = await this.findOne(id)
+    const {proyecto} = await this.findOne(id);
+    const {proyecto_id} = proyecto;
     const {estado} = await this.proyectoService.findOne(proyecto_id)
     if(estado!=1){
       throw new BadRequestException('El proyecto esta inactivo, no se pueden rechazar mas postulantes')

@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -13,6 +15,8 @@ import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { RecoverDto } from './dto/recover.dto';
 import { encryptPassword, generatePassword, RecoverPasswordEmail } from 'src/common/helpers';
+import { ChangePasswordDto } from './dto/changePassword.dto';
+import e from 'express';
 
 @Injectable()
 export class AuthService {
@@ -70,26 +74,30 @@ export class AuthService {
     return token;
   }
 
-  async modificarPassword(id: string, updateAuthDto: UpdateAuthDto) {
+  async modificarPassword(id: string, changePasswordDto:ChangePasswordDto) {
+    const persona = await this.authRepository.findOneBy({persona_id:id})
     try {
-      const { password } = updateAuthDto;
-      const user = await this.authRepository.findOneBy({ persona_id: id });
-      if (!user) {
-        throw new NotFoundException('No existe el usuario');
+      const {password, newPassword} = changePasswordDto;
+
+      if (!compareSync(password,persona.password)) {
+        throw new UnauthorizedException('contraseña equivocada');
       }
-      await this.dataSource
-        .createQueryBuilder()
-        .update(Auth)
-        .set({ password })
-        .where('persona_id=:id', { id })
-        .execute();
-      return `Contraseña modificada`;
+      const newEncriptedPassword = encryptPassword(newPassword)
+      await this.dataSource.createQueryBuilder()
+      .update(Auth)
+      .set({password:newEncriptedPassword})
+      .where('persona_id=:id',{id})
+      .execute();
+
+      return {
+        msg:'La contraseña fue modificada con exito'
+      }
     } catch (error) {
-      this.showError(error);
+      this.showError(error)
     }
   }
 
   private showError(error: any) {
-    console.log(error);
+    throw new InternalServerErrorException(error)
   }
 }

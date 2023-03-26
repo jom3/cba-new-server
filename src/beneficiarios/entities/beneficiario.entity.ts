@@ -8,11 +8,15 @@ export class Beneficiario {
     @PrimaryGeneratedColumn('uuid')
     beneficiario_id:string;
 
-    @Column('text')
-    proyecto_id:string;
+    @Column('text',{
+        nullable:true
+    })
+    archivo:string;
 
-    @Column('text')
-    persona_id:string;
+    @Column('text',{
+        nullable:true
+    })
+    observacion:string;
 
     @Column('numeric',{
         default:2

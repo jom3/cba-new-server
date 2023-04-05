@@ -1,6 +1,6 @@
 import { Institucion } from 'src/instituciones/entities/institucion.entity';
 import { Proyecto } from 'src/proyectos/entities/proyecto.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Ingreso {
@@ -42,6 +42,16 @@ export class Ingreso {
     nullable: true,
   })
   bloqueado_en: Date;
+
+  @BeforeInsert()
+  checkInsert() {
+    this.creado_en = new Date();
+  }
+
+  @BeforeUpdate()
+  checkUpdate() {
+    this.modificado_en = new Date();
+  }
 
   @ManyToOne(()=>Institucion,(institucion)=>institucion.ingreso,{
     eager:true,

@@ -82,12 +82,13 @@ export class ObservacionesService {
     await this.dataSource.createQueryBuilder()
     .update(Observacion)
     .set({estado:2})
-    .where('obseracion_id=:id',{id})
+    .where('observacion_id=:id',{id})
     .execute()
-    return `La observación fue bloqueada con exito`;
+    return {msg:`La observación fue bloqueada con exito`};
   }
 
   private showError(error: any) {
+    console.log(error)
     throw new InternalServerErrorException(error);
   }
 }

@@ -5,6 +5,7 @@ import { DataSource, Repository } from 'typeorm';
 import { CreateBeneficiarioDto } from './dto/create-beneficiario.dto';
 import { UpdateBeneficiarioDto } from './dto/update-beneficiario.dto';
 import { Beneficiario } from './entities/beneficiario.entity';
+import { Proyecto } from 'src/proyectos/entities/proyecto.entity';
 
 @Injectable()
 export class BeneficiariosService {
@@ -12,6 +13,8 @@ export class BeneficiariosService {
   constructor(
     @InjectRepository(Beneficiario)
     private readonly beneficiarioRepository:Repository<Beneficiario>,
+    @InjectRepository(Proyecto)
+    private readonly proyectoRepository:Repository<Proyecto>,
     private readonly dataSource:DataSource,
     private readonly proyectoService:ProyectosService
   ){}
@@ -19,7 +22,7 @@ export class BeneficiariosService {
   async create(createBeneficiarioDto: CreateBeneficiarioDto, file:Express.Multer.File) {
     const {persona_id, proyecto_id,archivo, ...toCreate} = createBeneficiarioDto
     try {
-      const personaExist = await this.beneficiarioRepository.findBy({persona:{persona_id}})
+      const personaExist = await this.beneficiarioRepository.findOneBy({persona:{persona_id}})
       if(personaExist){
         throw new InternalServerErrorException('Ya esta postulado en este proyecto')
       }
@@ -55,10 +58,8 @@ export class BeneficiariosService {
   }
 
   async accept(id: string) {
-    const {proyecto} = await this.findOne(id);
-    const {proyecto_id} = proyecto;
-    const {estado} = await this.proyectoService.findOne(proyecto_id)
-    if(estado!=1){
+    const {estado} = await this.proyectoRepository.findOneBy({beneficiario:{beneficiario_id:id}})
+    if(estado!=4){
       throw new BadRequestException('El proyecto esta inactivo, no se pueden aceptar mas postulantes')
     }
     await this.dataSource.createQueryBuilder()
@@ -74,10 +75,8 @@ export class BeneficiariosService {
   }
 
   async deny(id: string) {
-    const {proyecto} = await this.findOne(id);
-    const {proyecto_id} = proyecto;
-    const {estado} = await this.proyectoService.findOne(proyecto_id)
-    if(estado!=1){
+    const {estado} = await this.proyectoRepository.findOneBy({beneficiario:{beneficiario_id:id}})
+    if(estado!=4){
       throw new BadRequestException('El proyecto esta inactivo, no se pueden rechazar mas postulantes')
     }
     await this.dataSource.createQueryBuilder()

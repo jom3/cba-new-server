@@ -1,7 +1,7 @@
 import { Persona } from "src/personas/entities/persona.entity";
 import { Proyecto } from "src/proyectos/entities/proyecto.entity";
 import { Tarea } from "src/tareas/entities/tarea.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Egreso {
@@ -43,6 +43,16 @@ export class Egreso {
     nullable: true,
   })
   bloqueado_en: Date;
+
+  @BeforeInsert()
+  checkInsert() {
+    this.creado_en = new Date();
+  }
+
+  @BeforeUpdate()
+  checkUpdate() {
+    this.modificado_en = new Date();
+  }
 
   @ManyToOne(()=>Persona,(persona)=>persona.egreso,{
     eager:true,

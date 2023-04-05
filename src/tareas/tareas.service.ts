@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { CreateTareaDto } from './dto/create-tarea.dto';
 import { UpdateTareaDto } from './dto/update-tarea.dto';
 import { Tarea } from './entities/tarea.entity';
@@ -19,17 +19,15 @@ export class TareasService {
   ) {}
 
   async create(createTareaDto: CreateTareaDto) {
-    const {miembro_id,proyecto_id,egreso_id,...toCreate} = createTareaDto;
+    const { miembro_id, proyecto_id, egreso_id, ...toCreate } = createTareaDto;
     try {
-      const tarea = this.tareaRepository.create(
-        {
-          miembro:{miembro_id},
-          proyecto:{proyecto_id},
-          ...toCreate
-        }
-      );
+      const tarea = this.tareaRepository.create({
+        miembro: { miembro_id },
+        proyecto: { proyecto_id },
+        ...toCreate,
+      });
       await this.tareaRepository.save(tarea);
-      return {msg:'La tarea fue registrada con exito'};
+      return { msg: 'La tarea fue registrada con exito' };
     } catch (error) {
       this.showError(error);
     }
@@ -40,8 +38,18 @@ export class TareasService {
     return tareas;
   }
 
-  async findAllMe(id:string) {
-    const tareas = await this.tareaRepository.find({where:{miembro:{persona:{persona_id:id}}}});
+  async findAllMe(id: string) {
+    const tareas = await this.tareaRepository.find({
+      where: {
+        proyecto:{estado:4},
+        miembro: {
+          persona: {
+            persona_id: id,
+          },
+        },
+      },
+      order: { tarea: 'ASC' },
+    });
     return tareas;
   }
 
@@ -69,7 +77,7 @@ export class TareasService {
         throw new NotFoundException('La tarea no existe');
       }
       await this.tareaRepository.save(tarea);
-      return {msg:`La tarea fue modificada con exito`};
+      return { msg: `La tarea fue modificada con exito` };
     } catch (error) {
       this.showError(error);
     }
@@ -81,15 +89,16 @@ export class TareasService {
         'La tarea no puede ser eliminada, no esta activa',
       );
     }
-    await this.dataSource.createQueryBuilder()
-    .update(Tarea)
-    .set({
-      estado:0,
-      eliminado_en: new Date()
-    })
-    .where('tarea_id=:id',{id})
-    .execute()
-    return {msg:`La tarea fue eliminada con exito`};
+    await this.dataSource
+      .createQueryBuilder()
+      .update(Tarea)
+      .set({
+        estado: 0,
+        eliminado_en: new Date(),
+      })
+      .where('tarea_id=:id', { id })
+      .execute();
+    return { msg: `La tarea fue eliminada con exito` };
   }
 
   async restore(id: string) {
@@ -99,15 +108,16 @@ export class TareasService {
         'La tarea no puede ser restaurada, no esta inactiva',
       );
     }
-    await this.dataSource.createQueryBuilder()
-    .update(Tarea)
-    .set({
-      estado:1,
-      eliminado_en: null
-    })
-    .where('tarea_id=:id',{id})
-    .execute()
-    return {msg:`La tarea fue restaurada con exito`};
+    await this.dataSource
+      .createQueryBuilder()
+      .update(Tarea)
+      .set({
+        estado: 1,
+        eliminado_en: null,
+      })
+      .where('tarea_id=:id', { id })
+      .execute();
+    return { msg: `La tarea fue restaurada con exito` };
   }
 
   async lock(id: string) {
@@ -117,19 +127,20 @@ export class TareasService {
         'La tarea no puede ser completada, no esta activa',
       );
     }
-    await this.dataSource.createQueryBuilder()
-    .update(Tarea)
-    .set({
-      estado:2,
-      completado_en: new Date()
-    })
-    .where('tarea_id=:id',{id})
-    .execute()
-    return {msg:`La tarea fue completada con exito`};
+    await this.dataSource
+      .createQueryBuilder()
+      .update(Tarea)
+      .set({
+        estado: 2,
+        completado_en: new Date(),
+      })
+      .where('tarea_id=:id', { id })
+      .execute();
+    return { msg: `La tarea fue completada con exito` };
   }
 
   private showError(error: any) {
-    console.log(error)
+    console.log(error);
     throw new InternalServerErrorException(error);
   }
 }

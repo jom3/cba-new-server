@@ -67,10 +67,6 @@ export class ArchivosService {
     if(!archivo){
       throw new NotFoundException('No existe el archivo')
     }
-    console.log(archivo)
-    // fs.unlink(`./static/archivos/${archivo}`,function(e){
-    //   if(e) console.log(e)
-    // })
     await this.archivoRepository.delete({archivo_id:id})
     return {msg:`El archivo fue eliminado con exito`};
   }

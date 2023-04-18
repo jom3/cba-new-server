@@ -38,6 +38,11 @@ export class EgresosService {
     return egresos;
   }
 
+  async findAllByProyecto(id:string) {
+    const ingresos = await this.egresoRepository.find({where:{proyecto:{proyecto_id:id}}});
+    return ingresos;
+  }
+
   async findOne(id: string) {
     const egreso = await this.egresoRepository.findOneBy({ egreso_id: id });
     if (!egreso) {

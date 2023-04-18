@@ -13,6 +13,9 @@ export class Beneficiario {
     })
     archivo:string;
 
+    @Column('text')
+    proyecto_id:string;
+
     @Column('text',{
         nullable:true
     })

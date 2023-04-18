@@ -45,7 +45,8 @@ export class BeneficiariosService {
   }
 
   async findAllMe(id:string) {
-    const beneficiarios = await this.beneficiarioRepository.find({where:{persona:{persona_id:id}}});
+    // const beneficiarios = await this.beneficiarioRepository.find({where:{persona:{persona_id:id}}});
+    const beneficiarios = await this.dataSource.createQueryRunner().manager.query(`select ben.beneficiario_id, per.nombre_completo,pro.titulo,ben.estado from beneficiario as ben, persona as per, proyecto as pro where pro.proyecto_id=ben.proyecto_id and ben.persona_id=per.persona_id and per.persona_id=$1`,[id])
     return beneficiarios;
   }
 
@@ -89,6 +90,11 @@ export class BeneficiariosService {
     .where('beneficiario_id=:id',{id})
     .execute()
     return {msg:`El postulante fue rechazado como beneficiario en el proyecto`};
+  }
+
+  async obtenerNombre(id:string){
+    const {archivo} = await this.beneficiarioRepository.findOneBy({beneficiario_id:id})
+    return archivo;
   }
 
   private showError(error:any){

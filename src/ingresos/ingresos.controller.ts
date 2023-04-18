@@ -37,6 +37,13 @@ export class IngresosController {
 
   @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
   @UseGuards(AuthGuard('jwt'), PersonaRoleGuard)
+  @Get('listarIngresosByProyecto/:id')
+  findAllByProyecto(@Param('id', ParseUUIDPipe) id: string) {
+    return this.ingresosService.findAllByProyecto(id);
+  }
+
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'), PersonaRoleGuard)
   @Get('listarIngreso/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.ingresosService.findOne(id);

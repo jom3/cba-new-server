@@ -37,6 +37,13 @@ export class EgresosController {
 
   @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
   @UseGuards(AuthGuard('jwt'), PersonaRoleGuard)
+  @Get('listarEgresosByProyecto/:id')
+  findAllByProyecto(@Param('id', ParseUUIDPipe) id: string) {
+    return this.egresosService.findAllByProyecto(id);
+  }
+
+  @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  @UseGuards(AuthGuard('jwt'), PersonaRoleGuard)
   @Get('listarEgreso/:id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.egresosService.findOne(id);

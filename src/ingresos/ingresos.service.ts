@@ -34,6 +34,11 @@ export class IngresosService {
     return ingresos;
   }
 
+  async findAllByProyecto(id:string) {
+    const ingresos = await this.ingresoRepository.find({where:{proyecto:{proyecto_id:id}}});
+    return ingresos;
+  }
+
   async findOne(id: string) {
     const ingreso = await this.ingresoRepository.findOneBy({ingreso_id:id});
     if(!ingreso){

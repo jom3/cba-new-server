@@ -59,7 +59,8 @@ export class ProyectosService {
   }
 
   async findAllMe(id:string) {
-    const proyectos = await this.proyectoRepository.find({where:{persona:{persona_id:id}}});
+    const proyectos = await this.proyectoRepository.find({where:{miembro:{persona:{persona_id:id}}}});
+    console.log(proyectos)
     return proyectos;
   }
 
@@ -74,9 +75,7 @@ export class ProyectosService {
   }
 
   async findOne(id: string) {
-    const proyecto = await this.proyectoRepository.findOneBy({
-      proyecto_id: id,
-    });
+    const proyecto = await this.proyectoRepository.findOne({where:{proyecto_id:id, ingreso:{estado:2},egreso:{estado:2}}});
     if (!proyecto) {
       throw new NotFoundException('No existe ningun proyecto con ese codigo');
     }

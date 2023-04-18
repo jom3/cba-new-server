@@ -10,8 +10,11 @@ import {
   ParseUUIDPipe,
   UseInterceptors,
   UseGuards,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { RoleProtected } from 'src/common/decorators/rol-protected/rol-protected.decorator';
@@ -21,6 +24,8 @@ import { ValidRoles } from 'src/common/interfaces/valid-roles/valid-roles';
 import { ArchivosService } from './archivos.service';
 import { CreateArchivoDto } from './dto/create-archivo.dto';
 import { UpdateArchivoDto } from './dto/update-archivo.dto';
+import { join } from 'path';
+import { createReadStream, readFileSync } from 'fs';
 
 @Controller('archivos')
 export class ArchivosController {
@@ -85,4 +90,30 @@ export class ArchivosController {
   remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.archivosService.remove(id);
   }
+
+  // @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+  // @UseGuards(AuthGuard('jwt'), PersonaRoleGuard)
+  @Get('obtenerArchivo/:id')
+  async getFile(@Param('id') id: string, @Res({ passthrough: true }) res: Response) {
+    const nombre = await this.archivosService.obtenerNombre(id)
+    const file = readFileSync(join(`${process.cwd()}/static/archivos/${nombre}`));
+    res.set({
+      'Content-Type': 'application/json',
+      'Content-Disposition': `attachment; filename="${nombre}"`,
+    });
+    return new StreamableFile(file);
+  }
 }
+
+// @RoleProtected(ValidRoles.Admin, ValidRoles.Personal)
+// @UseGuards(AuthGuard('jwt'), PersonaRoleGuard)
+// @Get('obtenerArchivo/:id')
+// async getFile(@Param('id') id: string, @Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
+//   const nombre = await this.archivosService.obtenerNombre(id)
+//   const file = createReadStream(join(`${process.cwd()}/static/archivos/${nombre}`));
+//   res.set({
+//     'Content-Type': 'application/json',
+//     'Content-Disposition': `attachment; filename="${nombre}"`,
+//   });
+//   return new StreamableFile(file);
+// }

@@ -71,6 +71,11 @@ export class ArchivosService {
     return {msg:`El archivo fue eliminado con exito`};
   }
 
+  async obtenerNombre(id:string){
+    const {archivo} = await this.archivoRepository.findOneBy({archivo_id:id})
+    return archivo;
+  }
+
   private showError(error:any){
     console.log(error)
     throw new InternalServerErrorException(error)

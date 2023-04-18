@@ -10,7 +10,10 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -22,6 +25,8 @@ import { ValidRoles } from 'src/common/interfaces/valid-roles/valid-roles';
 import { BeneficiariosService } from './beneficiarios.service';
 import { CreateBeneficiarioDto } from './dto/create-beneficiario.dto';
 import { UpdateBeneficiarioDto } from './dto/update-beneficiario.dto';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 @Controller('beneficiarios')
 export class BeneficiariosController {
@@ -81,5 +86,17 @@ export class BeneficiariosController {
   @Delete('rechazarBeneficiario/:id')
   deny(@Param('id', ParseUUIDPipe) id: string) {
     return this.beneficiariosService.deny(id);
+  }
+
+  @Get('obtenerArchivo/:id')
+  async getFile(@Param('id') id: string, @Res({ passthrough: true }) res: Response) {
+    const nombre = await this.beneficiariosService.obtenerNombre(id)
+    console.log(nombre)
+    const file = readFileSync(join(`${process.cwd()}/static/archivos/postulaciones/${nombre}`));
+    res.set({
+      'Content-Type': 'application/json',
+      'Content-Disposition': `attachment; filename="${nombre}"`,
+    });
+    return new StreamableFile(file);
   }
 }

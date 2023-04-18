@@ -6,10 +6,7 @@ export class CreateContactoDto {
     @IsOptional()
     direccion?:string;
 
-    @IsEmail({},{message:'El correo electronico es obligatorio'})
-    @Matches("^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$",'',{
-        message:'El correo ingresado no es de gmail'
-    })
+    @IsString()
     email:string;
 
     @IsString({message:'El telefono es obligatorio'})

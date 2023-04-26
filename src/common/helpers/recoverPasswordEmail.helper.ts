@@ -11,7 +11,7 @@ export const RecoverPasswordEmail = async (password: string, email:string) => {
       secure: false,
       auth: {
         user: "joamsmg@gmail.com",
-        pass: "qfnvrvrgxlmqemee"
+        pass: "flhiijiywqwepyyj"
       },
     });
 

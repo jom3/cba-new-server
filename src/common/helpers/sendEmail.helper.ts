@@ -13,7 +13,7 @@ export const SendEmail = async (password: string, persona: Persona) => {
       secure: false,
       auth: {
         user: "joamsmg@gmail.com",
-        pass: "qfnvrvrgxlmqemee"
+        pass: "flhiijiywqwepyyj"
       },
     });
 

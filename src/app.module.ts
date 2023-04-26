@@ -34,20 +34,20 @@ import { ArchivosModule } from './archivos/archivos.module';
       // password:process.env.DB_PASSWORD,
       // autoLoadEntities:true,
       // synchronize:true
-      
-      type:'postgres',
-      url:process.env.DATABASE_URL,
-      host:process.env.PGHOST,
-      port:+process.env.PGPORT,
-      database:process.env.PGDATABASE,
-      username:process.env.PGUSER,
-      password:process.env.PGPASSWORD,
-      autoLoadEntities:true,
-      synchronize:true
+
+      type: 'postgres',
+      url: process.env.DATABASE_URL,
+      host: process.env.PGHOST,
+      port: +process.env.PGPORT,
+      database: process.env.PGDATABASE,
+      username: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname,'..','public'),
-      }),
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     PersonasModule,
     ContactosModule,
     InstitucionesModule,
@@ -65,7 +65,7 @@ import { ArchivosModule } from './archivos/archivos.module';
     MiembrosModule,
     TiposProyectosModule,
     AvancesModule,
-    ArchivosModule
+    ArchivosModule,
   ],
   controllers: [],
   providers: [],

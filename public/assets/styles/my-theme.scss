@@ -1,0 +1,136 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+@include mat.strong-focus-indicators();
+
+$my-primary-color:(
+    50 : #ffff,
+    100 : #b9bfe0,
+    200 : #8a94cb,
+    300 : #5b69b6,
+    400 : #3748a6,
+    500 : #142896,
+    600 : #12248e,
+    700 : #0e1e83,
+    800 : #0b1879,
+    900 : #060f68,
+    A100 : #989eff,
+    A200 : #656eff,
+    A400 : #323eff,
+    A700 : #1926ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #ffffff,
+        400 : #ffffff,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #ffffff,
+        A400 : #ffffff,
+        A700 : #ffffff,
+    )
+);
+$my-accent-color: (
+    50 : #ffff,
+    100 : #d4eff7,
+    200 : #b8e5f1,
+    300 : #9cdaeb,
+    400 : #86d2e7,
+    500 : #71cae3,
+    600 : #69c5e0,
+    700 : #5ebddc,
+    800 : #54b7d8,
+    900 : #42abd0,
+    A100 : #ffffff,
+    A200 : #f0fbff,
+    A400 : #bdedff,
+    A700 : #a3e6ff,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+$my-warn-color: (
+    50 : #ffff,
+    100 : #facbcb,
+    200 : #f7a8a8,
+    300 : #f38585,
+    400 : #f16b6b,
+    500 : #ee5151,
+    600 : #ec4a4a,
+    700 : #e94040,
+    800 : #e73737,
+    900 : #e22727,
+    A100 : #ffffff,
+    A200 : #ffebeb,
+    A400 : #ffb8b8,
+    A700 : #ff9f9f,
+    contrast: (
+        50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+
+$my-primary: mat.define-palette($my-primary-color,400);
+$my-accent: mat.define-palette($my-accent-color, 500);
+$my-warn: mat.define-palette($my-warn-color, 500);
+
+$my-primary2: mat.define-palette($my-primary-color,50);
+$my-accent2: mat.define-palette($my-accent-color, 50);
+$my-warn2: mat.define-palette($my-warn-color, 50);
+
+$my-theme: mat.define-light-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent,
+   warn:$my-warn,
+ )
+));
+
+$my-theme2: mat.define-light-theme((
+ color: (
+   primary: $my-primary2,
+   accent: $my-accent2,
+   warn:$my-warn2,
+ )
+));
+
+// $my-theme: mat.define-dark-theme((
+//  color: (
+//    primary: $my-primary,
+//    accent: $my-accent,
+//    warn:$my-warn
+//  )
+// ));
+
+@include mat.all-component-themes($my-theme);
+@include mat.strong-focus-indicators-theme($my-theme2);

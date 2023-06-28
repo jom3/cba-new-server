@@ -12,8 +12,8 @@ export const SendEmail = async (password: string, persona: Persona) => {
       port: 587,
       secure: false,
       auth: {
-        user: "joamsmg@gmail.com",
-        pass: "flhiijiywqwepyyj"
+        user: process.env.MAILER_USER,
+        pass: process.env.MAILER_PASS
       },
     });
 
@@ -26,14 +26,16 @@ export const SendEmail = async (password: string, persona: Persona) => {
     });
 
     await transporter.sendMail({
-      from: `"Fred Fooo 👻" <joamsmg@gmail.com>`,
+      from: `"Centro Boliviano Americano" <${process.env.MAILER_USER}>`,
       to: `${email}`,
-      subject: 'Hello ✔',
-      text: 'Hello world?',
+      subject: '🌐Cento Boliviano Americano🌐',
+      text: 'Entrega de datos de inicio de sesión',
       html: `
-        <h1>password</h1>
+        <h1 align="center">💬💬CENTRO BOLIVIANO AMERICANO💬💬</h1>
+        <h3>Datos importantes para el usuario, la institución no se hace cargo de perdidas o robo</h3>
         <p>Tu usuario es: ${email}</p>
         <p>Tu contraseña es: ${password}</p>
+        <h3>**Recuerda cambiar esta contraseña por otra mas segura luego de iniciar sesion por primera vez**</h3>
      `
     });
 

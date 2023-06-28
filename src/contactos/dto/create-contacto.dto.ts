@@ -7,6 +7,7 @@ export class CreateContactoDto {
     direccion?:string;
 
     @IsString()
+    @IsEmail()
     email:string;
 
     @IsString({message:'El telefono es obligatorio'})
